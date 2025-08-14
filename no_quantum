@@ -1,0 +1,48 @@
+import math
+import random
+
+# Função para calcular o máximo divisor comum (mdc)
+def mdc(a, b):
+    while b != 0:
+        a, b = b, a % b
+    return a
+
+# Função para calcular o período r de x mod N
+def find_period(x, N):
+    r = 1
+    while pow(x, r, N) != 1:
+        r += 1
+    return r
+
+# Algoritmo de Shor (implementação clássica)
+def shor_classical(N):
+    if N % 2 == 0:  # Verificar se N é par
+        return 2, N // 2
+
+    x = random.randint(2, N - 1)  # Escolher x aleatoriamente
+    while mdc(x, N) != 1:  # Garantir que x e N são coprimos
+        x = random.randint(2, N - 1)
+
+    # Encontrar o período r
+    r = find_period(x, N)
+    if r % 2 != 0:  # Verificar se r é par
+        return None
+
+    # Calcular os fatores de N
+    p = mdc(pow(x, r // 2) - 1, N)
+    q = mdc(pow(x, r // 2) + 1, N)
+
+    if p * q == N:  # Verificar se os fatores estão corretos
+        return p, q, r  # Retornar o período junto com os fatores
+    return None
+
+# Exemplo de uso
+N = 7578857411  # Número a ser fatorado
+result = shor_classical(N)
+
+# Verificar se o resultado não é None antes de acessar os índices
+if result is not None:
+    print(f"Os fatores de {N} são: {result[0]} e {result[1]}")
+    print(f"O período é: {result[2]}")  # Agora imprimimos corretamente o valor do período
+else:
+    print(f"Não foi possível fatorar {N} com este método.")
